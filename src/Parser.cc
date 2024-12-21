@@ -80,10 +80,10 @@ private:
   }
 
   ClubInfo parseClubInfo() {
-    std::size_t count;
+    std::int64_t count;
     std::vector<std::pair<std::chrono::hours, std::chrono::minutes>>
         parsedTimeInterval;
-    std::uint64_t cost;
+    std::int64_t cost;
 
     std::string countStr;
     std::string clubTimeStr;
@@ -95,7 +95,9 @@ private:
       throw Parser::FormatException();
     }
     try {
-      count = std::stoul(countStr);
+      count = std::stoi(countStr);
+      if (count < 0)
+        throw Parser::FormatException(countStr);
     } catch (const std::exception &e) {
       throw Parser::FormatException(countStr);
     }
@@ -117,17 +119,17 @@ private:
       throw Parser::FormatException();
     }
     try {
-      cost = std::stoul(costStr);
+      cost = std::stoi(costStr);
+      if (cost < 0)
+        throw Parser::FormatException();
     } catch (const std::exception &e) {
       throw Parser::FormatException(costStr);
     }
 
-    return ClubInfo{count,
-                    parsedTimeInterval[0].first,
-                    parsedTimeInterval[0].second,
-                    parsedTimeInterval[1].first,
-                    parsedTimeInterval[1].second,
-                    cost};
+    return ClubInfo{
+        static_cast<std::size_t>(count), parsedTimeInterval[0].first,
+        parsedTimeInterval[0].second,    parsedTimeInterval[1].first,
+        parsedTimeInterval[1].second,    static_cast<std::size_t>(cost)};
   }
 
   static bool checkName(const std::string &name) {
@@ -213,11 +215,10 @@ private:
     // Проверка формата номера кресла
     if (type == CommandID::IN_CLIENT_LOCK_TABLE) {
       try {
-        seatID = std::stoul(splitted[3]);
+        seatID = std::stoi(splitted[3]);
+        if (seatID < 0 || seatID > clubCapacity)
+          throw Parser::FormatException();
       } catch (const std::exception &e) {
-        throw Parser::FormatException();
-      }
-      if (seatID > clubCapacity) {
         throw Parser::FormatException();
       }
     }
