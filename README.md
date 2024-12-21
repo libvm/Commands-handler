@@ -1,14 +1,18 @@
 ## Installation
-1. Copy the repo
+Copy the repo
 ```bash
 git clone https://github.com/libvm/commands-handler.git
 ```
-2. Build the project using CMake
+Enter the project directory
+```bash
+cd commands-handler
+```
+Build the project using CMake
 ```bash
 mkdir build && cd build && cmake .. && make
 ```
 ## Usage
-3. Run the project
+Run the project
 ```bash
 ./ClubManagement your_input.txt
 ```
