@@ -45,6 +45,7 @@ int main(int argc, char *argv[]) {
   if (!manager.dayEnded) {
     manager.endDay();
   }
-  manager.printStats();
+
+  manager.printOutput();
   return 0;
 }

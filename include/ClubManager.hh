@@ -16,6 +16,8 @@ private:
   std::queue<std::string> waitQueue;
   std::unordered_multiset<std::string> leftFromQueue;
   std::unordered_map<std::string, bool> clientsState;
+  std::vector<std::string> output;
+  void getStats();
 
 public:
   bool dayEnded;
@@ -26,10 +28,10 @@ public:
   void addEvent(std::unique_ptr<Event> command);
 
   // Методы для команд
-  void endDay();
   void clientArrive(const std::string &client, const Time &time);
   void clientSit(const std::string &client, int table, const Time &time);
   void clientWait(const std::string &client, const Time &time);
   void clientLeave(const std::string &client, const Time &time);
-  void printStats();
+  void endDay();
+  void printOutput();
 };

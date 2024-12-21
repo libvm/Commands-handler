@@ -1,5 +1,6 @@
 #include "../include/Parser.hh"
 #include <algorithm>
+#include <exception>
 #include <sstream>
 
 namespace {
@@ -16,7 +17,11 @@ public:
 private:
   std::string getNextLine() {
     std::string line;
-    std::getline(input, line);
+    try {
+      std::getline(input, line);
+    } catch (const std::exception &e) {
+      throw Parser::FormatException();
+    }
     return line;
   }
 
@@ -76,26 +81,41 @@ private:
 
   ClubInfo parseClubInfo() {
     std::size_t count;
-    std::string clubTime;
+    std::vector<std::pair<std::chrono::hours, std::chrono::minutes>>
+        parsedTimeInterval;
     std::uint64_t cost;
 
-    std::string countStr = getNextLine();
+    std::string countStr;
+    std::string clubTimeStr;
+    std::string costStr;
+
+    try {
+      countStr = getNextLine();
+    } catch (const std::exception &e) {
+      throw Parser::FormatException();
+    }
     try {
       count = std::stoul(countStr);
     } catch (const std::exception &e) {
       throw Parser::FormatException(countStr);
     }
 
-    clubTime = getNextLine();
-    std::vector<std::pair<std::chrono::hours, std::chrono::minutes>>
-        parsedTimeInterval;
     try {
-      parsedTimeInterval = parseTimeInterval(clubTime);
+      clubTimeStr = getNextLine();
     } catch (const std::exception &e) {
-      throw Parser::FormatException(clubTime);
+      throw Parser::FormatException();
+    }
+    try {
+      parsedTimeInterval = parseTimeInterval(clubTimeStr);
+    } catch (const std::exception &e) {
+      throw Parser::FormatException(clubTimeStr);
     }
 
-    std::string costStr = getNextLine();
+    try {
+      costStr = getNextLine();
+    } catch (const std::exception &e) {
+      throw Parser::FormatException();
+    }
     try {
       cost = std::stoul(costStr);
     } catch (const std::exception &e) {
@@ -210,7 +230,12 @@ private:
       std::pair<std::chrono::hours, std::chrono::minutes> previousTime,
       std::size_t clubCapacity) {
     Command nextCommand;
-    std::string commandStr = getNextLine();
+    std::string commandStr;
+    try {
+      commandStr = getNextLine();
+    } catch (const std::exception &e) {
+      throw Parser::FormatException();
+    }
     try {
       nextCommand = parseCommand(commandStr, previousTime, clubCapacity);
     } catch (const std::exception &e) {
